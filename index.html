@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ms. Stefania's Class Form</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f9f9f9; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+    .form-container { background: #fff; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); width: 100%; max-width: 400px; }
+    h2 { text-align: center; margin-bottom: 1rem; }
+    label { display: block; margin: 0.5rem 0 0.2rem; }
+    input, button, select { width: 100%; padding: 0.6rem; margin-bottom: 1rem; border: 1px solid #ccc; border-radius: 6px; font-size: 1rem; }
+    button { background: #4CAF50; color: white; cursor: pointer; border: none; }
+    button:hover { background: #45a049; }
+    p { text-align: center; font-weight: bold; display: none; }
+    .success { color: green; }
+    .error { color: red; }
+  </style>
+</head>
+<body>
+  <div class="form-container">
+    <h2>Class Form</h2>
+    <form id="myForm" method="POST">
+      <label for="firstName">First Name</label>
+      <input type="text" id="firstName" name="firstName" required>
+      
+      <label for="lastName">Last Name</label>
+      <input type="text" id="lastName" name="lastName" required>
+      
+      <label for="class">Class</label>
+      <select id="class" name="class" required>
+        <option value="Ms. Stefania's Class">Ms. Stefania's Class</option>
+      </select>
+      
+      <button type="submit">Submit</button>
+    </form>
+    <p id="response"></p>
+  </div>
+
+  <script>
+    const scriptURL = "https://script.google.com/macros/s/AKfycbypPTV5GjXF1RaZpYHqpfrwj_4opecYrMRNlSqwzIoK2D7f9jEzouJBEtj4fC8dW4Q/exec";
+    const form = document.getElementById("myForm");
+    const response = document.getElementById("response");
+
+    form.addEventListener("submit", e => {
+      e.preventDefault();
+      const submitButton = form.querySelector('button[type="submit"]');
+      submitButton.disabled = true;
+      response.style.display = "none";
+
+      fetch(scriptURL, { method: "POST", body: new FormData(form)})
+        .then(res => {
+          if(res.ok){
+            response.innerHTML = "✅ Form submitted!";
+            response.className = "success";
+            response.style.display = "block";
+            form.reset();
+            // Redirect to next page after 1 second
+            setTimeout(() => {
+              window.location.href = "nextPage.html"; // <-- Change this to your next page file
+            }, 1000);
+          } else {
+            throw new Error("Submission failed");
+          }
+          submitButton.disabled = false;
+        })
+        .catch(err => {
+          response.innerHTML = "❌ Error, try again.";
+          response.className = "error";
+          response.style.display = "block";
+          submitButton.disabled = false;
+        });
+    });
+  </script>
+</body>
+</html>
